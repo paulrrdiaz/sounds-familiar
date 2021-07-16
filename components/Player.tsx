@@ -14,23 +14,21 @@ const Player = () => {
     setPlay(true);
   }, [currentTrack]);
 
-  return (
-    auth.accessToken && (
-      <Box position="fixed" bottom={0} left={5} right={5}>
-        <SpotifyWebPlayer
-          styles={{ bgColor: '#f9f9f9' }}
-          token={auth.accessToken}
-          uris={currentTrack ? [currentTrack] : []}
-          play={play}
-          callback={(state) => {
-            if (!state.isPlaying) {
-              setPlay(false);
-            }
-          }}
-        />
-      </Box>
-    )
-  );
+  return auth.accessToken ? (
+    <Box position="fixed" bottom={0} left={5} right={5}>
+      <SpotifyWebPlayer
+        styles={{ bgColor: '#f9f9f9' }}
+        token={auth.accessToken}
+        uris={currentTrack ? [currentTrack] : []}
+        play={play}
+        callback={(state) => {
+          if (!state.isPlaying) {
+            setPlay(false);
+          }
+        }}
+      />
+    </Box>
+  ) : null;
 };
 
 export default Player;
