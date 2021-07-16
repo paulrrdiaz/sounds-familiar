@@ -16,7 +16,7 @@ const TrackList = ({ tracks }: { tracks: TrackType[] }) => {
       />
       <Box h="55vh" mt={4} overflowY="auto">
         {tracks.map((track) => (
-          <TrackItem key={track.id} my={3} {...track} />
+          <TrackItem key={track.uri} my={3} {...track} />
         ))}
       </Box>
       <Box

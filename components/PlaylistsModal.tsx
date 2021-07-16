@@ -49,7 +49,7 @@ const PlaylistsModal = () => {
 
       // resetForm(defaultValues);
 
-      onFetchPlaylists(user.id);
+      onFetchPlaylists(user.id || '');
 
       toast({
         title: 'Playlist created',
@@ -83,14 +83,14 @@ const PlaylistsModal = () => {
     try {
       await http.put(`playlists/${uid}`, { track });
 
-      onFetchPlaylists(user.id);
+      onFetchPlaylists(user.id || '');
 
       toast({
         title: 'Track added',
         description: (
           <>
             <Box as="span" fontWeight="bold">
-              {track.title}
+              {track?.title}
             </Box>{' '}
             was added to the playlist
           </>

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-const useYupValidationResolver = (validationSchema) =>
+const useYupValidationResolver = (validationSchema: any) =>
   useCallback(
     async (data) => {
       try {
@@ -16,7 +16,7 @@ const useYupValidationResolver = (validationSchema) =>
         return {
           values: {},
           errors: errors.inner.reduce(
-            (allErrors, currentError) => ({
+            (allErrors: any, currentError: any) => ({
               ...allErrors,
               [currentError.path]: {
                 type: currentError.type ?? 'validation',

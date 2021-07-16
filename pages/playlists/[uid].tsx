@@ -14,7 +14,7 @@ const Playlist = () => {
   const router = useRouter();
   const { state } = useAppContext();
   const { playlists } = state;
-  const { uid } = router.query;
+  const uid = router.query.uid as string;
   const normalizedPlaylists = normalizeByUID(playlists);
   const playlist = uid && normalizedPlaylists[uid];
 

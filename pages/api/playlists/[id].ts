@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import Playlist from '@/models/Playlist';
+import { TrackType } from '@/utils/interfaces';
 import dbConnect from '@/utils/mongodb';
 
 dbConnect();
@@ -19,7 +20,7 @@ export default async function handler(
 
         const playlist = await Playlist.findById(id);
         const tracks = remove
-          ? playlist.tracks.filter((t) => t.uri !== track.uri)
+          ? playlist.tracks.filter((t: TrackType) => t.uri !== track.uri)
           : [...playlist.tracks, track];
 
         await Playlist.findByIdAndUpdate(id, {

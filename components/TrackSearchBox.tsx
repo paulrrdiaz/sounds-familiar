@@ -6,9 +6,10 @@ import { useToast, Spinner } from '@chakra-ui/react';
 import TextField from '@/components/controls/TextField';
 import { isEmpty } from '@/utils';
 import spotifyApi, { spotifyHandleError } from '@/utils/spotify';
+import { TrackType } from '@/utils/interfaces';
 
 type TrackSearchBoxProps = {
-  setTracks: ([]) => void;
+  setTracks: (tracks: TrackType[]) => void;
 };
 
 const TrackSearchBox = ({ setTracks }: TrackSearchBoxProps) => {
@@ -42,13 +43,17 @@ const TrackSearchBox = ({ setTracks }: TrackSearchBoxProps) => {
             uri,
             id,
             picture: images.reduce((smallest, image) => {
-              if (image.height < smallest.height) return image;
+              const imageH = image.height || 0;
+              const smallestH = smallest.height || 0;
+
+              if (imageH < smallestH) return image;
+
               return smallest;
             }, images[0]).url
           };
         });
 
-        setTracks(items);
+        items && setTracks(items);
       } catch (error) {
         spotifyHandleError(error);
       } finally {

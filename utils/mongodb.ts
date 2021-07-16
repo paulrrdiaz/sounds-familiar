@@ -19,17 +19,17 @@ const connection = {
   isConnected: false
 };
 
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
+mongoose.set('useFindAndModify', false);
+
 async function dbConnect() {
   if (connection.isConnected) {
     return;
   }
 
-  const db = await mongoose.connect(DB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-    useFindAndModify: false
-  });
+  const db = await mongoose.connect(DB_URI);
 
   connection.isConnected = !!db.connections[0].readyState;
 }

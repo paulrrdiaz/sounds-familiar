@@ -7,7 +7,7 @@ import {
   Dispatch
 } from 'react';
 import { useRouter } from 'next/router';
-import localStorage from 'local-storage';
+import { get, set, remove } from 'local-storage';
 import { useToast, Box } from '@chakra-ui/react';
 
 import spotifyApi from '@/utils/spotify';
@@ -44,7 +44,8 @@ const initialState = {
 const AppContext = createContext<{
   state: InitialContextStateType;
   dispatch: Dispatch<any>;
-  methods: ContextMethodsType;
+  // FIXME
+  methods: any;
 }>({ state: initialState, dispatch: () => null, methods: {} });
 
 type AppContextProviderProps = {
@@ -59,7 +60,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
   // Populate context if exists on cookies
   useEffect(() => {
-    const context = localStorage.get('context');
+    const context: string = get('context');
 
     if (context) {
       const parsedContext = JSON.parse(context);
@@ -109,7 +110,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
   // Save any state' change on cookies
   useEffect(() => {
-    localStorage.set('context', JSON.stringify(state));
+    set('context', JSON.stringify(state));
   }, [state]);
 
   // Refresh accessToken based on refreshToken
@@ -141,7 +142,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
   // Clean all data after log out
   const onLogOut = () => {
-    localStorage.remove('context');
+    remove('context');
     router.push('/login');
   };
 

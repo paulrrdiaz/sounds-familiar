@@ -4,10 +4,17 @@ import { HiPlay, HiPlusCircle } from 'react-icons/hi';
 
 import { useAppContext } from '@/context';
 import { TrackType } from '@/utils/interfaces';
+import { string } from 'yup';
 
-const TrackItem = (props: TrackType) => {
+type OtherProps = {
+  my?: number;
+};
+
+type TrackItemProps = TrackType & OtherProps;
+
+const TrackItem = (props: TrackItemProps) => {
   const router = useRouter();
-  const { uid } = router.query;
+  const uid = router.query.uid as string;
   const { artist, title, uri, picture, ...rest } = props;
   const {
     state: { currentTrack },

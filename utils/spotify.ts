@@ -1,7 +1,7 @@
 import SpotifyWebApi from 'spotify-web-api-node';
 import Router from 'next/router';
 import { createStandaloneToast } from '@chakra-ui/react';
-import localStorage from 'local-storage';
+import { get, remove } from 'local-storage';
 
 export const credentials = {
   clientId: process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID,
@@ -49,7 +49,7 @@ export const spotifyHandleError = (error: any) => {
       isClosable: true
     });
 
-    localStorage.remove('context');
+    remove('context');
     Router.push('/login');
   }
 };
@@ -57,10 +57,13 @@ export const spotifyHandleError = (error: any) => {
 const spotifyApi = new SpotifyWebApi({
   clientId: process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID
 });
-const context = localStorage.get('context');
+
+const context: string = get('context');
 
 if (context) {
-  spotifyApi.setAccessToken(context.accessToken);
+  const parsedContext = JSON.parse(context);
+
+  spotifyApi.setAccessToken(parsedContext.accessToken);
 }
 
 export default spotifyApi;
