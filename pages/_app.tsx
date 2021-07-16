@@ -16,12 +16,12 @@ Router.events.on('routeChangeError', () => nprogress.done());
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <AppContextProvider>
-      <ChakraProvider theme={theme}>
+    <ChakraProvider theme={theme}>
+      <AppContextProvider>
         <Component {...pageProps} />
         <PlaylistsModal />
-      </ChakraProvider>
-    </AppContextProvider>
+      </AppContextProvider>
+    </ChakraProvider>
   );
 }
 export default MyApp;

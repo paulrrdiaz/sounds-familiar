@@ -4,6 +4,7 @@ import {
   useContext,
   useReducer,
   useEffect,
+  useLayoutEffect,
   Dispatch
 } from 'react';
 import { useRouter } from 'next/router';
@@ -59,7 +60,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
   const [state, dispatch] = useReducer(contextReducer, initialState);
 
   // Populate context if exists on cookies
-  useEffect(() => {
+  useLayoutEffect(() => {
     const context: string = get('context');
 
     if (context) {
@@ -69,6 +70,10 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
         type: ContextActionsTypes.initFromCookies,
         payload: { context: parsedContext }
       });
+    } else {
+      if (!code) {
+        router.push('/login');
+      }
     }
   }, []);
 
@@ -186,7 +191,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
             <Box as="span" fontWeight="bold">
               {track.title}
             </Box>{' '}
-            was {action} to the playlist
+            was {action} {remove ? 'from' : 'to'} the playlist
           </>
         ),
         status: 'success',

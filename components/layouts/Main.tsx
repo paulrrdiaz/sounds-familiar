@@ -14,6 +14,8 @@ const Main = ({ children }: MainProps) => {
     state: { auth }
   } = useAppContext();
 
+  console.log(auth.accessToken, 'auth.accessToken');
+
   return auth.accessToken ? (
     <>
       <Header />
