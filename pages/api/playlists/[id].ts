@@ -40,18 +40,14 @@ export default async function handler(
       try {
         const { id } = req.query;
 
-        console.log(id, 'id delete');
-
         // Save this for a moment
         const playlist = await Playlist.findById(id);
-        console.log(playlist.owner, 'playlist.owner');
 
         // Delete playlist
         await Playlist.findByIdAndDelete(id);
 
         // Update list with deleted playlist
         const playlists = await Playlist.find({ owner: playlist.owner });
-        console.log(playlists.length);
 
         res.status(200).json({ success: true, playlists });
       } catch (error) {

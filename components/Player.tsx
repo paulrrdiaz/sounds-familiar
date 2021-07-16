@@ -15,8 +15,8 @@ const Player = () => {
   }, [currentTrack]);
 
   return (
-    <Box position="fixed" bottom={0} left={5} right={5}>
-      {auth.accessToken && (
+    auth.accessToken && (
+      <Box position="fixed" bottom={0} left={5} right={5}>
         <SpotifyWebPlayer
           styles={{ bgColor: '#f9f9f9' }}
           token={auth.accessToken}
@@ -28,8 +28,8 @@ const Player = () => {
             }
           }}
         />
-      )}
-    </Box>
+      </Box>
+    )
   );
 };
 

@@ -13,7 +13,6 @@ export default function Home() {
     <MainLayout>
       <TrackSearchBox setTracks={setTracks} />
       <TrackList tracks={tracks} />
-      <Player />
     </MainLayout>
   );
 }

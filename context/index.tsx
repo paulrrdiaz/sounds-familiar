@@ -4,7 +4,6 @@ import {
   useContext,
   useReducer,
   useEffect,
-  useLayoutEffect,
   Dispatch
 } from 'react';
 import { useRouter } from 'next/router';
@@ -15,13 +14,14 @@ import spotifyApi from '@/utils/spotify';
 import http from '@/utils/http';
 import {
   InitialContextStateType,
-  ContextMethodsType,
   ContextActionsTypes,
   ModalType,
   ModalsName,
   TrackType
 } from '@/utils/interfaces';
 import contextReducer from './reducer';
+
+const storage = process.env.NEXT_PUBLIC_STORAGE as string;
 
 const initialState = {
   auth: {
@@ -59,32 +59,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
   const { code } = router.query;
   const [state, dispatch] = useReducer(contextReducer, initialState);
 
-  // Populate context if exists on cookies
-  useLayoutEffect(() => {
-    const context: string = get('context');
-
-    if (context) {
-      const parsedContext = JSON.parse(context);
-
-      dispatch({
-        type: ContextActionsTypes.initFromCookies,
-        payload: { context: parsedContext }
-      });
-    } else {
-      if (!code) {
-        router.push('/login');
-      }
-    }
-  }, []);
-
-  // get auth info so we can play with Spotify API
-  const onLogin = async (code: string | string[]) => {
+  const fetchUserData = async () => {
     try {
-      const { data } = await http.post('login', { code });
-
-      spotifyApi.setAccessToken(data.accessToken);
-      dispatch({ type: ContextActionsTypes.setAuth, payload: { auth: data } });
-
       const { body } = await spotifyApi.getMe();
       const { email, display_name, id, images } = body;
 
@@ -101,9 +77,48 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
       });
 
       await onFetchPlaylists(id);
-
-      router.push('/');
     } catch (error) {}
+  };
+
+  // Populate context auth if exists on storage
+  useEffect(() => {
+    const auth: string = get(storage);
+
+    if (auth) {
+      const parsedAuth = JSON.parse(auth);
+
+      if (parsedAuth.accessToken) {
+        dispatch({
+          type: ContextActionsTypes.setAuth,
+          payload: { auth: parsedAuth }
+        });
+
+        fetchUserData();
+      }
+    }
+
+    const lastCode: string = get(`${storage}-code`);
+
+    if (!lastCode && !code) {
+      router.push('/login');
+    }
+  }, []);
+
+  // get auth info so we can play with Spotify API
+  const onLogin = async (code: string | string[]) => {
+    try {
+      const { data } = await http.post('login', { code });
+
+      spotifyApi.setAccessToken(data.accessToken);
+
+      dispatch({ type: ContextActionsTypes.setAuth, payload: { auth: data } });
+      fetchUserData();
+
+      set(`${storage}-code`, code);
+      router.push('/');
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // Call onLogin if a code is present in URL
@@ -115,8 +130,10 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
   // Save any state' change on cookies
   useEffect(() => {
-    set('context', JSON.stringify(state));
-  }, [state]);
+    if (state.auth.accessToken) {
+      set(storage, JSON.stringify(state.auth));
+    }
+  }, [state.auth]);
 
   // Refresh accessToken based on refreshToken
   const onRefresh = async (refreshToken: string) => {
@@ -124,6 +141,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
       const { data } = await http.post('refresh', { refreshToken });
 
       spotifyApi.setAccessToken(data.accessToken);
+
       dispatch({
         type: ContextActionsTypes.setAuth,
         payload: { auth: { ...data, refreshToken } }
@@ -147,7 +165,14 @@ export const AppContextProvider = ({ children }: AppContextProviderProps) => {
 
   // Clean all data after log out
   const onLogOut = () => {
-    remove('context');
+    dispatch({
+      type: ContextActionsTypes.setAuth,
+      payload: { auth: initialState.auth }
+    });
+
+    remove(storage);
+    remove(`${storage}-code`);
+
     router.push('/login');
   };
 

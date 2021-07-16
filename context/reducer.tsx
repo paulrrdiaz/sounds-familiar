@@ -16,7 +16,7 @@ const contextReducer = (
     }
 
     case ContextActionsTypes.initFromCookies: {
-      return { ...state, ...action.payload.context };
+      return { ...state, auth: action.payload.auth };
     }
 
     case ContextActionsTypes.setUser: {

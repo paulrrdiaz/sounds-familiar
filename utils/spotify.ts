@@ -9,6 +9,8 @@ export const credentials = {
   redirectUri: process.env.NEXT_PUBLIC_BASE_URI
 };
 
+const storage = process.env.NEXT_PUBLIC_STORAGE as string;
+
 export type AvatarType = {
   height: number | null;
   url: string;
@@ -49,7 +51,7 @@ export const spotifyHandleError = (error: any) => {
       isClosable: true
     });
 
-    remove('context');
+    remove(storage);
     Router.push('/login');
   }
 };
@@ -58,12 +60,12 @@ const spotifyApi = new SpotifyWebApi({
   clientId: process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID
 });
 
-const context: string = get('context');
+const auth: string = get(storage);
 
-if (context) {
-  const parsedContext = JSON.parse(context);
+if (auth) {
+  const parsedAuth = JSON.parse(auth);
 
-  spotifyApi.setAccessToken(parsedContext.accessToken);
+  spotifyApi.setAccessToken(parsedAuth.accessToken);
 }
 
 export default spotifyApi;

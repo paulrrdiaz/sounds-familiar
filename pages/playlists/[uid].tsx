@@ -37,7 +37,6 @@ const Playlist = () => {
           </Box>
 
           <TrackList tracks={playlist.tracks} />
-          <Player />
         </Box>
       ) : (
         <PlaylistSkeleton />

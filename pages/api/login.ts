@@ -32,7 +32,6 @@ export default async function handler(
       expiresIn: data.body.expires_in
     });
   } catch (error) {
-    console.log(error, 'error');
     res.status(400).json({
       error,
       message: 'Something went wrong!'

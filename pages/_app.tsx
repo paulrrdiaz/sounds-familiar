@@ -8,6 +8,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import theme from '@/theme';
 import { AppContextProvider } from '@/context';
 import PlaylistsModal from '@/components/PlaylistsModal';
+import Player from '@/components/Player';
 
 nprogress.configure({ showSpinner: false });
 Router.events.on('routeChangeStart', () => nprogress.start());
@@ -20,6 +21,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <AppContextProvider>
         <Component {...pageProps} />
         <PlaylistsModal />
+        <Player />
       </AppContextProvider>
     </ChakraProvider>
   );
